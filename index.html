@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQL Formatter & Beautifier</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/sql-formatter@15.6.12/dist/sql-formatter.umd.min.js"></script>
+    <script defer src="scripts.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1>SQL Formatter</h1>
+        </div>
+      </header>
+
+      <div class="toolbar" id="toolbar">
+        <div class="toolbar-group">
+          <span class="toolbar-label">Database</span>
+          <button class="toolbar-icon-btn active" data-setting="dialect" data-value="sql" title="SQL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="dialect" data-value="mysql" title="MySQL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <text x="3" y="16" font-size="10" font-weight="bold" fill="currentColor" stroke="none">My</text>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="dialect" data-value="tsql" title="MSSQL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <text x="3" y="16" font-size="10" font-weight="bold" fill="currentColor" stroke="none">MS</text>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="dialect" data-value="plsql" title="Oracle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"/>
+              <circle cx="12" cy="12" r="5"/>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="dialect" data-value="postgresql" title="PostgreSQL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <text x="3" y="16" font-size="10" font-weight="bold" fill="currentColor" stroke="none">PG</text>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="dialect" data-value="sqlite" title="SQLite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="dialect" data-value="snowflake" title="Snowflake">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l2 4-2 4-2-4z M12 14l2 4-2 4-2-4z M6 6l4 2-4 2-4-2z M18 14l4 2-4 2-4-2z M6 14l4 2-4 2-4-2z M18 6l4 2-4 2-4-2z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="toolbar-group">
+          <span class="toolbar-label">Styles</span>
+          <button class="toolbar-icon-btn active" data-setting="stylePreset" data-value="default" title="Default">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"/>
+              <line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/>
+              <line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="stylePreset" data-value="indented" title="Indented">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 3 18 7 14"/>
+              <line x1="11" y1="6" x2="21" y2="6"/>
+              <line x1="11" y1="12" x2="21" y2="12"/>
+              <line x1="11" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="stylePreset" data-value="collapsed" title="Collapsed">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 6h16M4 12h16M4 18h7"/>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="stylePreset" data-value="commasBefore" title="Commas Before">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <text x="2" y="16" font-size="12" fill="currentColor" stroke="none">,</text>
+              <line x1="10" y1="12" x2="21" y2="12"/>
+            </svg>
+          </button>
+          <button class="toolbar-icon-btn" data-setting="stylePreset" data-value="rightAligned" title="Right Aligned">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="21" y1="6" x2="9" y2="6"/>
+              <line x1="21" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="18" x2="6" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="toolbar-group">
+          <span class="toolbar-label">Options</span>
+          <label class="toolbar-check" data-tooltip="Minify SQL">
+            <input id="minify" type="checkbox" />
+            <span>SQL minify</span>
+          </label>
+          <label class="toolbar-check" data-tooltip="Remove comments">
+            <input id="removeComments" type="checkbox" />
+            <span>Remove comments</span>
+          </label>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <span class="toolbar-label">Settings</span>
+          <button class="toolbar-btn" onclick="openModal('caseModal')" data-tooltip="Case Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7h8m-8 10h8m6-10h4m-4 10h4M10 7a4 4 0 108 0 4 4 0 00-8 0zm0 10a4 4 0 108 0 4 4 0 00-8 0z"/>
+            </svg>
+          </button>
+          <button class="toolbar-btn" onclick="openModal('layoutModal')" data-tooltip="Layout Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+            </svg>
+          </button>
+        </div>
+
+
+
+      </div>
+
+      <main class="workspace">
+        <section class="panel">
+          <div class="panel-header">
+            <span>SQL Input</span>
+            <span class="hint">.sql</span>
+          </div>
+          <div class="editor-container">
+            <div class="line-numbers" id="line-numbers"></div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </section>
+
+        <div class="resizer" id="resizer"></div>
+
+        <section class="panel right-panel">
+          <div class="panel-header">
+            <div>
+              <span>Output</span>
+              <span class="hint">Formatted SQL</span>
+            </div>
+            <button class="preview-copy-btn" onclick="copyPreviewContent()" data-tooltip="Copy formatted SQL">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+              </svg>
+            </button>
+          </div>
+          <div id="preview" class="preview" aria-live="polite"><pre><code id="output" class="language-sql"></code></pre></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Case Settings Modal -->
+    <div class="modal" id="caseModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Case Settings</h2>
+          <button class="modal-close" onclick="closeModal('caseModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Keywords Case:</label>
+            <div class="case-btn-group">
+              <button class="case-btn" data-setting="keywordCase" data-value="upper" data-tooltip="Uppercase" title="Uppercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="18" font-size="16" font-weight="bold" fill="currentColor" stroke="none">AA</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="keywordCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
+                </svg>
+              </button>
+              <button class="case-btn active" data-setting="keywordCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M5 8h14M5 16h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Datatype Case:</label>
+            <div class="case-btn-group">
+              <button class="case-btn" data-setting="dataTypeCase" data-value="upper" data-tooltip="Uppercase" title="Uppercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="18" font-size="16" font-weight="bold" fill="currentColor" stroke="none">AA</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="dataTypeCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
+                </svg>
+              </button>
+              <button class="case-btn active" data-setting="dataTypeCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M5 8h14M5 16h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Function Case:</label>
+            <div class="case-btn-group">
+              <button class="case-btn" data-setting="functionCase" data-value="upper" data-tooltip="Uppercase" title="Uppercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="18" font-size="16" font-weight="bold" fill="currentColor" stroke="none">AA</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="functionCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
+                </svg>
+              </button>
+              <button class="case-btn active" data-setting="functionCase" data-value="initcap" data-tooltip="InitCap" title="InitCap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="5" y="18" font-size="16" fill="currentColor" stroke="none">Aa</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="functionCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M5 8h14M5 16h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Identifiers Case (table/column/alias):</label>
+            <div class="case-btn-group">
+              <button class="case-btn" data-setting="identifiersCase" data-value="upper" data-tooltip="Uppercase" title="Uppercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="18" font-size="16" font-weight="bold" fill="currentColor" stroke="none">AA</text>
+                </svg>
+              </button>
+              <button class="case-btn active" data-setting="identifiersCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="identifiersCase" data-value="initcap" data-tooltip="InitCap" title="InitCap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="5" y="18" font-size="16" fill="currentColor" stroke="none">Aa</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="identifiersCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M5 8h14M5 16h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Variable Case:</label>
+            <div class="case-btn-group">
+              <button class="case-btn" data-setting="variableCase" data-value="upper" data-tooltip="Uppercase" title="Uppercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="18" font-size="16" font-weight="bold" fill="currentColor" stroke="none">AA</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="variableCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="variableCase" data-value="initcap" data-tooltip="InitCap" title="InitCap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="5" y="18" font-size="16" fill="currentColor" stroke="none">Aa</text>
+                </svg>
+              </button>
+              <button class="case-btn active" data-setting="variableCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M5 8h14M5 16h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Quoted Identifier Case:</label>
+            <div class="case-btn-group">
+              <button class="case-btn" data-setting="quotedIdentifierCase" data-value="upper" data-tooltip="Uppercase" title="Uppercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="18" font-size="16" font-weight="bold" fill="currentColor" stroke="none">AA</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="quotedIdentifierCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="quotedIdentifierCase" data-value="initcap" data-tooltip="InitCap" title="InitCap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="5" y="18" font-size="16" fill="currentColor" stroke="none">Aa</text>
+                </svg>
+              </button>
+              <button class="case-btn active" data-setting="quotedIdentifierCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M5 8h14M5 16h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="closeModal('caseModal')">Done</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Hidden select elements for case settings (used by JS) -->
+    <select id="dialect" style="display:none;"><option value="sql" selected>SQL</option></select>
+    <select id="stylePreset" style="display:none;"><option value="default" selected>Default</option></select>
+    <select id="keywordCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
+    <select id="dataTypeCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
+    <select id="functionCase" style="display:none;"><option value="initcap" selected>InitCap</option></select>
+    <select id="identifiersCase" style="display:none;"><option value="lower" selected>Lowercase</option></select>
+    <select id="variableCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
+    <select id="quotedIdentifierCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
+    <select id="commaLinebreak" style="display:none;"><option value="after" selected>After</option></select>
+    <select id="listStyle" style="display:none;"><option value="stacked" selected>Stacked</option></select>
+    <select id="stackedAlign" style="display:none;"><option value="left" selected>Align left</option></select>
+
+    <!-- Layout Settings Modal -->
+    <div class="modal" id="layoutModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Layout Settings</h2>
+          <button class="modal-close" onclick="closeModal('layoutModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Linebreaks with Comma:</label>
+            <div class="case-btn-group">
+              <button class="case-btn active" data-setting="commaLinebreak" data-value="after" title="After">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="14" font-size="10" fill="currentColor" stroke="none">,↓</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="commaLinebreak" data-value="before" title="Before">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="4" y="14" font-size="10" fill="currentColor" stroke="none">↓,</text>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="commaLinebreak" data-value="beforeSpace" title="Before with space">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <text x="2" y="14" font-size="9" fill="currentColor" stroke="none">↓ ,</text>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>List and Parameters Style:</label>
+            <div class="case-btn-group">
+              <button class="case-btn active" data-setting="listStyle" data-value="stacked" title="Stacked">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="8" x2="16" y2="8"/>
+                  <line x1="8" y1="12" x2="16" y2="12"/>
+                  <line x1="8" y1="16" x2="16" y2="16"/>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="listStyle" data-value="notStacked" title="Not Stacked">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="6" y1="12" x2="18" y2="12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Stacked Align:</label>
+            <div class="case-btn-group">
+              <button class="case-btn active" data-setting="stackedAlign" data-value="left" title="Align left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="3" y1="8" x2="15" y2="8"/>
+                  <line x1="3" y1="12" x2="21" y2="12"/>
+                  <line x1="3" y1="16" x2="18" y2="16"/>
+                </svg>
+              </button>
+              <button class="case-btn" data-setting="stackedAlign" data-value="right" title="Align right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="9" y1="8" x2="21" y2="8"/>
+                  <line x1="3" y1="12" x2="21" y2="12"/>
+                  <line x1="6" y1="16" x2="21" y2="16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="modal-checkbox">
+              <input id="andOrUnderWhere" type="checkbox" checked />
+              <span>AND/OR under WHERE</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="modal-checkbox">
+              <input id="removeLinebreakBeforeBeautify" type="checkbox" />
+              <span>Remove linebreak before beautify</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="modal-checkbox">
+              <input id="trimQuotedCharEachLine" type="checkbox" />
+              <span>Trim quoted char of each line</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="trimChar">Quoted char to trim:</label>
+            <input id="trimChar" type="text" class="modal-input" value="&quot;" maxlength="1" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="closeModal('layoutModal')">Done</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
