@@ -190,6 +190,8 @@ body::before {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 600;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
 }
 
 .panel-header-output {
