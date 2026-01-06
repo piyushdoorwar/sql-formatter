@@ -308,6 +308,19 @@ const applyIdentifierCaseBestEffort = (sql, cfg) => {
       .join('\n');
   }
 
+  // First select item on same line as SELECT (best-effort)
+  if (!isUnchanged(cfg.identifiersCase)) {
+    out = forEachNonQuotedSegment(out, (seg) => {
+      return seg.replace(
+        /\bSELECT\b(\s+DISTINCT|\s+ALL)?\s+([A-Za-z_][A-Za-z0-9_$\.]*)/gi,
+        (m, modifier, id) => {
+          const replacement = applyCase(id, cfg.identifiersCase);
+          return m.replace(id, replacement);
+        }
+      );
+    });
+  }
+
   return out;
 };
 
