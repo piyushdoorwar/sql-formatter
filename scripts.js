@@ -5,7 +5,6 @@ const outputEl = document.getElementById('output-editor');
 const outputLineNumbers = document.getElementById('output-line-numbers');
 
 const controls = {
-  dialect: document.getElementById('dialect'),
   stylePreset: document.getElementById('stylePreset'),
   keywordCase: document.getElementById('keywordCase'),
   dataTypeCase: document.getElementById('dataTypeCase'),
@@ -445,7 +444,7 @@ const applyQuotedIdentifierCase = (sql, mode) => {
 
 const getFormatterOptions = (cfg) => {
   const opts = {
-    language: cfg.dialect,
+    language: 'sql',
   };
 
   if (!isUnchanged(cfg.keywordCase)) opts.keywordCase = cfg.keywordCase;
@@ -492,7 +491,6 @@ const setOutput = (sql) => {
 
 const formatAndRender = () => {
   const cfg = {
-    dialect: controls.dialect.value,
     stylePreset: controls.stylePreset.value,
     keywordCase: controls.keywordCase.value,
     dataTypeCase: controls.dataTypeCase.value,
