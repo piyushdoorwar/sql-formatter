@@ -1000,11 +1000,11 @@ textarea::selection {
 
 .preview code,
 .preview pre {
-  background: rgba(103, 57, 183, 0.1);
-  padding: 0.4rem 0.6rem;
-  border-radius: 8px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
   font-family: 'JetBrains Mono', monospace;
-  border: 1px solid rgba(103, 57, 183, 0.2);
+  border: none;
 }
 
 .preview a {

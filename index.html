@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/sql-formatter@15.6.12/dist/sql-formatter.umd.min.js"></script>
+    <script defer src="https://unpkg.com/sql-formatter@15.4.2/dist/sql-formatter.min.js"></script>
     <script defer src="scripts.js"></script>
   </head>
   <body>
@@ -100,18 +100,6 @@
               <line x1="21" y1="18" x2="6" y2="18"/>
             </svg>
           </button>
-        </div>
-
-        <div class="toolbar-group">
-          <span class="toolbar-label">Options</span>
-          <label class="toolbar-check" data-tooltip="Minify SQL">
-            <input id="minify" type="checkbox" />
-            <span>SQL minify</span>
-          </label>
-          <label class="toolbar-check" data-tooltip="Remove comments">
-            <input id="removeComments" type="checkbox" />
-            <span>Remove comments</span>
-          </label>
         </div>
 
         <div class="toolbar-divider"></div>
@@ -421,6 +409,18 @@
           <div class="form-group">
             <label for="trimChar">Quoted char to trim:</label>
             <input id="trimChar" type="text" class="modal-input" value="&quot;" maxlength="1" />
+          </div>
+          <div class="form-group">
+            <label class="modal-checkbox">
+              <input id="minify" type="checkbox" />
+              <span>SQL Minify</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="modal-checkbox">
+              <input id="removeComments" type="checkbox" />
+              <span>Remove Comments</span>
+            </label>
           </div>
         </div>
         <div class="modal-footer">

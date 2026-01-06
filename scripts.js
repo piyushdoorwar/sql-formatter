@@ -655,36 +655,38 @@ let selectedImageFile = null;
 const imageUploadArea = document.getElementById('imageUploadArea');
 const imageFileInput = document.getElementById('imageFileInput');
 
-imageUploadArea.addEventListener('click', () => {
-  imageFileInput.click();
-});
+if (imageUploadArea && imageFileInput) {
+  imageUploadArea.addEventListener('click', () => {
+    imageFileInput.click();
+  });
 
-imageFileInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file && file.type.startsWith('image/')) {
-    handleImageFile(file);
-  }
-});
+  imageFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handleImageFile(file);
+    }
+  });
 
-// Drag and drop functionality
-imageUploadArea.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  imageUploadArea.classList.add('drag-over');
-});
+  // Drag and drop functionality
+  imageUploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    imageUploadArea.classList.add('drag-over');
+  });
 
-imageUploadArea.addEventListener('dragleave', () => {
-  imageUploadArea.classList.remove('drag-over');
-});
+  imageUploadArea.addEventListener('dragleave', () => {
+    imageUploadArea.classList.remove('drag-over');
+  });
 
-imageUploadArea.addEventListener('drop', (e) => {
-  e.preventDefault();
-  imageUploadArea.classList.remove('drag-over');
-  
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) {
-    handleImageFile(file);
-  }
-});
+  imageUploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    imageUploadArea.classList.remove('drag-over');
+    
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handleImageFile(file);
+    }
+  });
+}
 
 function handleImageFile(file) {
   selectedImageFile = file;
@@ -693,17 +695,27 @@ function handleImageFile(file) {
   const reader = new FileReader();
   reader.onload = (e) => {
     const preview = document.getElementById('imagePreview');
-    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+    if (preview) {
+      preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+    }
   };
   reader.readAsDataURL(file);
   
   // Clear URL input
-  document.getElementById('imageUrl').value = '';
+  const imageUrl = document.getElementById('imageUrl');
+  if (imageUrl) {
+    imageUrl.value = '';
+  }
 }
 
 function insertImage() {
-  const altText = document.getElementById('imageAlt').value || 'image';
-  let imageUrl = document.getElementById('imageUrl').value;
+  const altTextEl = document.getElementById('imageAlt');
+  const imageUrlEl = document.getElementById('imageUrl');
+  
+  if (!altTextEl || !imageUrlEl) return;
+  
+  const altText = altTextEl.value || 'image';
+  let imageUrl = imageUrlEl.value;
   
   // If file is selected, convert to base64
   if (selectedImageFile) {
@@ -744,8 +756,13 @@ function insertImage() {
 
 // Link Modal Functions
 function insertLink() {
-  const linkText = document.getElementById('linkText').value;
-  const linkUrl = document.getElementById('linkUrl').value;
+  const linkTextEl = document.getElementById('linkText');
+  const linkUrlEl = document.getElementById('linkUrl');
+  
+  if (!linkTextEl || !linkUrlEl) return;
+  
+  const linkText = linkTextEl.value;
+  const linkUrl = linkUrlEl.value;
   
   if (!linkText || !linkUrl) {
     alert('Please enter both link text and URL');
@@ -768,8 +785,13 @@ function insertLink() {
 
 // Code Block Modal Functions
 function insertCodeBlock() {
-  const language = document.getElementById('codeLanguage').value;
-  const content = document.getElementById('codeContent').value;
+  const languageEl = document.getElementById('codeLanguage');
+  const contentEl = document.getElementById('codeContent');
+  
+  if (!languageEl || !contentEl) return;
+  
+  const language = languageEl.value;
+  const content = contentEl.value;
   
   const langSpec = language ? language : '';
   const codeText = content || 'your code here';
@@ -828,6 +850,7 @@ function pasteCodeBlock() {
 
 function clearCodeBlock() {
   const codeContent = document.getElementById('codeContent');
+  if (!codeContent) return;
   codeContent.value = '';
   updateCodeLineNumbers();
   codeContent.focus();
@@ -837,6 +860,7 @@ function clearCodeBlock() {
 function updateCodeLineNumbers() {
   const codeContent = document.getElementById('codeContent');
   const lineNumbers = document.getElementById('codeLineNumbers');
+  if (!codeContent || !lineNumbers) return;
   const lines = codeContent.value.split('\n').length;
   lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
 }
@@ -844,12 +868,14 @@ function updateCodeLineNumbers() {
 function syncCodeScroll() {
   const codeContent = document.getElementById('codeContent');
   const lineNumbers = document.getElementById('codeLineNumbers');
+  if (!codeContent || !lineNumbers) return;
   lineNumbers.scrollTop = codeContent.scrollTop;
 }
 
 function pasteCodeBlock() {
   navigator.clipboard.readText().then(text => {
     const codeContent = document.getElementById('codeContent');
+    if (!codeContent) return;
     const start = codeContent.selectionStart;
     const end = codeContent.selectionEnd;
     const currentValue = codeContent.value;
@@ -861,13 +887,6 @@ function pasteCodeBlock() {
   }).catch(err => {
     console.log('Paste failed, use Ctrl+V');
   });
-}
-
-function clearCodeBlock() {
-  const codeContent = document.getElementById('codeContent');
-  codeContent.value = '';
-  updateCodeLineNumbers();
-  codeContent.focus();
 }
 
 // Copy preview content
