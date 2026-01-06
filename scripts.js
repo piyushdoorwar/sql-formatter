@@ -1,9 +1,8 @@
 const editor = document.getElementById('editor');
 const lineNumbers = document.getElementById('line-numbers');
 const resizer = document.getElementById('resizer');
-const outputEl = document.getElementById('output');
+const outputEl = document.getElementById('output-editor');
 const outputLineNumbers = document.getElementById('output-line-numbers');
-const previewEl = document.getElementById('preview');
 
 const controls = {
   dialect: document.getElementById('dialect'),
@@ -487,15 +486,8 @@ const getFormatterOptions = (cfg) => {
 };
 
 const setOutput = (sql) => {
-  outputEl.textContent = sql;
+  outputEl.value = sql;
   updateOutputLineNumbers(sql);
-  if (window.hljs) {
-    try {
-      window.hljs.highlightElement(outputEl);
-    } catch (e) {
-      // ignore highlighting errors
-    }
-  }
 };
 
 const formatAndRender = () => {
@@ -575,11 +567,12 @@ editor.addEventListener('scroll', () => {
   lineNumbers.scrollTop = editor.scrollTop;
 });
 
-if (previewEl && outputLineNumbers) {
-  previewEl.addEventListener('scroll', () => {
-    outputLineNumbers.scrollTop = previewEl.scrollTop;
+if (outputEl && outputLineNumbers) {
+  outputEl.addEventListener('scroll', () => {
+    outputLineNumbers.scrollTop = outputEl.scrollTop;
   });
 }
+
 
 Object.values(controls).forEach((el) => {
   el.addEventListener('change', scheduleRender);
@@ -1072,8 +1065,8 @@ window.redoEditor = function() {
 };
 
 window.copyEditor = async function() {
-  const selection = editor.value.substring(editor.selectionStart, editor.selectionEnd);
-  const textToCopy = selection || editor.value;
+  formatAndRender();
+  const textToCopy = outputEl.value || editor.value;
   
   try {
     await navigator.clipboard.writeText(textToCopy);
@@ -1086,15 +1079,26 @@ window.copyEditor = async function() {
   editor.focus();
 };
 
+window.downloadFormattedSql = function() {
+  formatAndRender();
+  const text = outputEl.value || editor.value || '';
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'formatted.sql';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
 window.pasteEditor = async function() {
   try {
     const text = await navigator.clipboard.readText();
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    const currentValue = editor.value;
     
-    editor.value = currentValue.substring(0, start) + text + currentValue.substring(end);
-    editor.selectionStart = editor.selectionEnd = start + text.length;
+    editor.value = text;
+    editor.selectionStart = editor.selectionEnd = text.length;
     
     updateLineNumbers();
     formatAndRender();

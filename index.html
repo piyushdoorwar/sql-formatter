@@ -6,8 +6,6 @@
     <title>SQL Formatter & Beautifier</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script defer src="https://unpkg.com/sql-formatter@15.4.2/dist/sql-formatter.min.js"></script>
     <script defer src="scripts.js"></script>
   </head>
@@ -41,10 +39,10 @@
             </svg>
           </button>
           <button class="toolbar-btn" onclick="downloadFormattedSql()" data-tooltip="Download formatted SQL">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 3v12"/>
-              <path d="M7 10l5 5 5-5"/>
-              <path d="M5 21h14"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
           </button>
           <button class="toolbar-btn" onclick="pasteEditor()" data-tooltip="Paste (Ctrl+V)">
@@ -104,18 +102,10 @@
 
         <div class="toolbar-group">
           <span class="toolbar-label">Settings</span>
-          <button class="toolbar-btn" onclick="openModal('caseModal')" data-tooltip="Case Settings">
+          <button class="toolbar-btn" onclick="openModal('settingsModal')" data-tooltip="Settings">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 7h8m-8 10h8m6-10h4m-4 10h4M10 7a4 4 0 108 0 4 4 0 00-8 0zm0 10a4 4 0 108 0 4 4 0 00-8 0z"/>
-            </svg>
-          </button>
-          <button class="toolbar-btn" onclick="openModal('layoutModal')" data-tooltip="Layout Settings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <path d="M3 9h18M9 21V9"/>
-              <path d="M14 14h5M14 18h3" stroke-width="1.5"/>
-              <circle cx="7" cy="6" r="0.5" fill="currentColor"/>
-              <circle cx="5.5" cy="6" r="0.5" fill="currentColor"/>
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12m11.32-11.32l2.12-2.12"/>
             </svg>
           </button>
         </div>
@@ -141,24 +131,24 @@
             <span>Output</span>
             <span class="hint">Formatted SQL</span>
           </div>
-          <div id="preview" class="preview" aria-live="polite">
-            <div class="output-container">
-              <div class="output-line-numbers" id="output-line-numbers"></div>
-              <pre><code id="output" class="language-sql"></code></pre>
-            </div>
+          <div class="editor-container">
+            <div class="output-line-numbers" id="output-line-numbers"></div>
+            <textarea id="output-editor" class="output-editor" spellcheck="false" readonly wrap="off"></textarea>
           </div>
         </section>
       </main>
     </div>
 
-    <!-- Case Settings Modal -->
-    <div class="modal" id="caseModal">
-      <div class="modal-content">
+    <!-- Combined Settings Modal -->
+    <div class="modal" id="settingsModal">
+      <div class="modal-content modal-content-wide">
         <div class="modal-header">
-          <h2>Case Settings</h2>
-          <button class="modal-close" onclick="closeModal('caseModal')">&times;</button>
+          <h2>Settings</h2>
+          <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body modal-body-split">
+          <div class="modal-section">
+            <h3 class="modal-section-title">Case Settings</h3>
           <div class="form-group">
             <label>Keywords Case:</label>
             <div class="case-btn-group">
@@ -299,14 +289,9 @@
               </button>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" onclick="closeModal('caseModal')">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Hidden select elements for case settings (used by JS) -->
+          </div>
+          <div class="modal-section">
+            <h3 class="modal-section-title">Layout Settings</h3>
     <select id="dialect" style="display:none;"><option value="sql" selected>SQL</option></select>
     <select id="stylePreset" style="display:none;"><option value="default" selected>Default</option></select>
     <select id="keywordCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
@@ -319,14 +304,7 @@
     <select id="listStyle" style="display:none;"><option value="stacked" selected>Stacked</option></select>
     <select id="stackedAlign" style="display:none;"><option value="left" selected>Align left</option></select>
 
-    <!-- Layout Settings Modal -->
-    <div class="modal" id="layoutModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Layout Settings</h2>
-          <button class="modal-close" onclick="closeModal('layoutModal')">&times;</button>
-        </div>
-        <div class="modal-body">
+
           <div class="form-group">
             <label>Styles:</label>
             <div class="case-btn-group">
@@ -471,11 +449,15 @@
               <span>Remove Comments</span>
             </label>
           </div>
+          </div>
+          </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" onclick="closeModal('layoutModal')">Done</button>
+          <button class="btn btn-primary" onclick="closeModal('settingsModal')">Done</button>
         </div>
       </div>
     </div>
+    
+    <!-- Hidden select elements for case settings (used by JS) -->
   </body>
 </html>
