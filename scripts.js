@@ -4,7 +4,6 @@ const resizer = document.getElementById('resizer');
 const outputEl = document.getElementById('output');
 const outputLineNumbers = document.getElementById('output-line-numbers');
 const previewEl = document.getElementById('preview');
-const copyBtn = document.querySelector('.preview-copy-btn');
 
 const controls = {
   dialect: document.getElementById('dialect'),
@@ -587,26 +586,6 @@ Object.values(controls).forEach((el) => {
   el.addEventListener('input', scheduleRender);
 });
 
-// Copy output
-window.copyPreviewContent = async () => {
-  const text = outputEl.textContent || '';
-  try {
-    await navigator.clipboard.writeText(text);
-    if (copyBtn) {
-      copyBtn.classList.add('copied');
-      setTimeout(() => copyBtn.classList.remove('copied'), 900);
-    }
-  } catch (err) {
-    // Fallback
-    const temp = document.createElement('textarea');
-    temp.value = text;
-    document.body.appendChild(temp);
-    temp.select();
-    document.execCommand('copy');
-    document.body.removeChild(temp);
-  }
-};
-
 // Resizer functionality (kept from template)
 let isResizing = false;
 resizer.addEventListener('mousedown', () => {
@@ -1035,33 +1014,6 @@ function pasteCodeBlock() {
     codeContent.focus();
   }).catch(err => {
     console.log('Paste failed, use Ctrl+V');
-  });
-}
-
-// Copy preview content
-function copyPreviewContent() {
-  const preview = document.getElementById('preview');
-  const button = document.querySelector('.preview-copy-btn');
-  
-  const htmlContent = preview.innerHTML;
-  const textContent = preview.innerText;
-  
-  const blob = new Blob([htmlContent], { type: 'text/html' });
-  const plainBlob = new Blob([textContent], { type: 'text/plain' });
-  
-  const clipboardItem = new ClipboardItem({
-    'text/html': blob,
-    'text/plain': plainBlob
-  });
-  
-  navigator.clipboard.write([clipboardItem]).then(() => {
-    button.classList.add('copied');
-    setTimeout(() => button.classList.remove('copied'), 2000);
-  }).catch(() => {
-    navigator.clipboard.writeText(textContent).then(() => {
-      button.classList.add('copied');
-      setTimeout(() => button.classList.remove('copied'), 2000);
-    }).catch(err => console.error('Failed to copy:', err));
   });
 }
 

@@ -196,84 +196,6 @@ body::before {
 
 .panel-header-output {
   position: relative;
-  padding-right: 48px;
-}
-
-.panel-header-output .preview-copy-btn {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.preview-copy-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.preview-copy-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.preview-copy-btn:hover {
-  background: var(--accent-purple);
-  border-color: var(--accent-purple);
-  color: var(--text);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-purple);
-}
-
-.preview-copy-btn:active {
-  transform: translateY(0) scale(0.95);
-}
-
-.preview-copy-btn::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  transform: translateY(-4px);
-  padding: 0.5rem 0.875rem;
-  background: var(--panel-bg-elevated);
-  border: 1px solid var(--border-light);
-  border-radius: 10px;
-  color: var(--text);
-  font-size: 0.75rem;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  z-index: 1000;
-  box-shadow: var(--shadow-md);
-}
-
-.preview-copy-btn:hover::after {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.preview-copy-btn.copied::after {
-  content: 'Copied!' !important;
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-  background: var(--accent-yellow);
-  border-color: var(--accent-yellow);
-  color: var(--bg);
-  font-weight: 600;
 }
 
 .toolbar {
@@ -976,6 +898,7 @@ textarea::selection {
 
 .preview {
   flex: 1;
+  display: flex;
   overflow-y: auto;
   padding: 0;
   border-radius: 20px;
@@ -990,6 +913,7 @@ textarea::selection {
   align-items: stretch;
   min-height: 0;
   height: 100%;
+  flex: 1;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.01);
   overflow: hidden;
@@ -1020,7 +944,28 @@ textarea::selection {
   flex: 1;
   margin: 0;
   padding: 1rem;
+  min-height: 0;
   overflow-x: auto;
+}
+
+.output-container pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.output-container pre::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.output-container pre::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-light));
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.output-container pre::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--accent-purple-light), var(--accent-yellow));
+  box-shadow: var(--shadow-purple);
 }
 
 .preview h1,

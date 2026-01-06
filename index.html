@@ -34,10 +34,17 @@
               <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"/>
             </svg>
           </button>
-          <button class="toolbar-btn" onclick="copyEditor()" data-tooltip="Copy (Ctrl+C)">
+          <button class="toolbar-btn" onclick="copyEditor()" data-tooltip="Copy formatted SQL">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+          </button>
+          <button class="toolbar-btn" onclick="downloadFormattedSql()" data-tooltip="Download formatted SQL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v12"/>
+              <path d="M7 10l5 5 5-5"/>
+              <path d="M5 21h14"/>
             </svg>
           </button>
           <button class="toolbar-btn" onclick="pasteEditor()" data-tooltip="Paste (Ctrl+V)">
@@ -133,12 +140,6 @@
           <div class="panel-header panel-header-output">
             <span>Output</span>
             <span class="hint">Formatted SQL</span>
-            <button class="preview-copy-btn" onclick="copyPreviewContent()" data-tooltip="Copy formatted SQL">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-              </svg>
-            </button>
           </div>
           <div id="preview" class="preview" aria-live="polite">
             <div class="output-container">
