@@ -14,7 +14,6 @@ const controls = {
   quotedIdentifierCase: document.getElementById('quotedIdentifierCase'),
   commaLinebreak: document.getElementById('commaLinebreak'),
   listStyle: document.getElementById('listStyle'),
-  stackedAlign: document.getElementById('stackedAlign'),
   andOrUnderWhere: document.getElementById('andOrUnderWhere'),
   removeLinebreakBeforeBeautify: document.getElementById('removeLinebreakBeforeBeautify'),
   trimQuotedCharEachLine: document.getElementById('trimQuotedCharEachLine'),
@@ -74,12 +73,64 @@ const detectDialect = (sql) => {
   return 'sql';
 };
 
+const DIALECT_BADGES = {
+  sql: {
+    label: 'Standard SQL',
+    svg: [
+      '<ellipse cx="12" cy="5" rx="9" ry="3"/>',
+      '<path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+      '<path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+    ].join(''),
+  },
+  mysql: {
+    label: 'MySQL',
+    svg: [
+      '<path d="M12.7 11.5c-.2-.4-.5-.7-.9-.9-.4-.2-.8-.3-1.3-.3-.6 0-1.1.1-1.5.4-.4.3-.7.6-.9 1.1-.2.5-.3 1-.3 1.6 0 .6.1 1.1.3 1.6.2.5.5.8.9 1.1.4.3.9.4 1.5.4.5 0 .9-.1 1.3-.3.4-.2.7-.5.9-.9l1.4.8c-.3.6-.8 1.1-1.4 1.4-.6.3-1.3.5-2.1.5-.9 0-1.7-.2-2.4-.6-.7-.4-1.2-.9-1.6-1.6-.4-.7-.6-1.5-.6-2.4 0-.9.2-1.7.6-2.4.4-.7.9-1.2 1.6-1.6.7-.4 1.5-.6 2.4-.6.8 0 1.5.2 2.1.5.6.3 1.1.8 1.4 1.4l-1.4.8z"/>',
+      '<path d="M16 8v8h-1.5v-3.2h-2.6v3.2H10.4V8h1.5v3.2h2.6V8H16z" transform="translate(3, 0)"/>',
+    ].join(''),
+  },
+  tsql: {
+    label: 'Microsoft SQL Server',
+    svg: '<path d="M2 4h9v9H2V4zm11 0h9v9h-9V4zM2 15h9v9H2v-9zm11 0h9v9h-9v-9z" opacity="0.9"/>',
+  },
+  plsql: {
+    label: 'Oracle PL/SQL',
+    svg: [
+      '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>',
+      '<path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>',
+    ].join(''),
+  },
+  postgresql: {
+    label: 'PostgreSQL',
+    svg: '<path d="M17.1 4.3c-1.1-.6-2.4-.8-3.8-.6-.5-.3-1.2-.5-2-.6-1.3-.1-2.5.2-3.4.8C6.8 4.1 5.9 4.8 5.3 5.7c-.6 1-1 2.2-1.1 3.6-.1 1 0 2 .3 2.9-.4.8-.6 1.7-.5 2.6.1 1.4.7 2.5 1.6 3.3.5.5 1.1.8 1.8 1l.3 1.2c.2.8.5 1.4.9 1.9.5.5 1.1.8 1.8.8.3 0 .7-.1 1-.2.4.3.9.5 1.4.5.7 0 1.3-.3 1.7-.8.2.1.4.1.6.1 1.1 0 2-.6 2.5-1.5.4-.7.5-1.5.5-2.4l.1-2.2c.7-.3 1.3-.8 1.7-1.4.6-.9.9-2 .8-3.2-.1-1.4-.6-2.6-1.4-3.5-.5-.6-1.1-1-1.7-1.3-.2-.3-.4-.5-.5-.8zm-5.3 15c-.3 0-.6-.2-.8-.5l-.5-2.2c.4 0 .7-.1 1-.2l.5 2.1c.1.3 0 .5-.2.6-.1.1-.2.2-.3.2h.3zm2.9-1.2c-.1.4-.4.7-.8.7-.1 0-.2 0-.3-.1l-.1-.4-.5-2.1c.3-.2.6-.4.8-.6l.6 1.9c.1.2.2.4.3.6zm2-5.9c-.1.6-.4 1.2-.8 1.6-.4.4-.9.6-1.5.7l-.8-2.9c-.1-.4-.4-.7-.8-.8-.4-.1-.8 0-1.1.3-.3.3-.4.6-.4 1l-.1 3.1c-.5.2-1 .2-1.5.1-.7-.2-1.2-.6-1.5-1.2-.3-.6-.4-1.3-.3-2 .1-.6.4-1.1.8-1.5-.3-.8-.4-1.7-.3-2.6.1-1.1.4-2 .9-2.8.5-.8 1.2-1.3 2-1.6.8-.3 1.8-.3 2.7 0 .4-.4.9-.6 1.5-.7 1-.2 2-.1 2.8.4.5.3.9.7 1.2 1.2.5.7.8 1.6.8 2.7.1 1-.1 1.9-.6 2.6z"/>',
+  },
+  sqlite: {
+    label: 'SQLite',
+    svg: [
+      '<path d="M12 2L4 6v6c0 5.5 3.4 10.7 8 12 4.6-1.3 8-6.5 8-12V6l-8-4zm0 2.2L18 7v5c0 4.5-2.8 8.7-6 9.9-3.2-1.2-6-5.4-6-9.9V7l6-2.8z"/>',
+      '<path d="M12 6.5L7 9v4c0 3 1.9 5.8 4 6.6V6.5zm1 0v13.1c2.1-.8 4-3.6 4-6.6V9l-4-2.5z" opacity="0.6"/>',
+    ].join(''),
+  },
+  snowflake: {
+    label: 'Snowflake',
+    svg: [
+      '<path d="M12 2v4m0 12v4M2 12h4m12 0h4M5.6 5.6l2.8 2.8m7.2 7.2l2.8 2.8M18.4 5.6l-2.8 2.8m-7.2 7.2l-2.8 2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>',
+      '<circle cx="12" cy="12" r="3"/>',
+    ].join(''),
+  },
+};
+
 const updateSqlTypeLabel = (dialect) => {
   const title = document.getElementById('sql-input-title');
   const hint = document.getElementById('sql-type-hint');
   const label = (dialect || 'sql').toUpperCase();
+  const badge = DIALECT_BADGES[dialect] || DIALECT_BADGES.sql;
+  const dialectBtn = document.getElementById('dialect-btn');
+  const dialectIcon = document.getElementById('dialect-icon');
   if (title) title.textContent = 'SQL Input';
   if (hint) hint.textContent = label;
+  if (dialectBtn) dialectBtn.title = `${badge.label} (auto-selected)`;
+  if (dialectIcon) dialectIcon.innerHTML = badge.svg;
 };
 
 const updateLineNumbers = () => {
@@ -468,10 +519,8 @@ const getFormatterOptions = (cfg) => {
   }
 
   // Alignment presets
-  if (cfg.stylePreset === 'rightAligned' || cfg.stackedAlign === 'right') {
+  if (cfg.stylePreset === 'rightAligned') {
     opts.indentStyle = 'tabularRight';
-  } else if (cfg.stackedAlign === 'left') {
-    opts.indentStyle = 'tabularLeft';
   }
 
   // AND/OR newline placement
@@ -497,7 +546,6 @@ const formatAndRender = () => {
     quotedIdentifierCase: controls.quotedIdentifierCase.value,
     commaLinebreak: controls.commaLinebreak.value,
     listStyle: controls.listStyle.value,
-    stackedAlign: controls.stackedAlign.value,
     andOrUnderWhere: controls.andOrUnderWhere.checked,
     removeLinebreakBeforeBeautify: controls.removeLinebreakBeforeBeautify.checked,
     trimQuotedCharEachLine: controls.trimQuotedCharEachLine.checked,
