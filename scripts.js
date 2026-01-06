@@ -683,6 +683,7 @@ document.querySelectorAll('.case-btn').forEach(btn => {
       const event = new Event('change', { bubbles: true });
       selectEl.dispatchEvent(event);
     }
+    scheduleRender();
   });
 });
 

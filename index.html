@@ -167,12 +167,12 @@
                   <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
                 </svg>
               </button>
-              <button class="case-btn active" data-setting="functionCase" data-value="initcap" data-tooltip="InitCap" title="InitCap">
+              <button class="case-btn" data-setting="functionCase" data-value="initcap" data-tooltip="InitCap" title="InitCap">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <text x="5" y="18" font-size="16" fill="currentColor" stroke="none">Aa</text>
                 </svg>
               </button>
-              <button class="case-btn" data-setting="functionCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+              <button class="case-btn active" data-setting="functionCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M5 12h14M5 8h14M5 16h14"/>
                 </svg>
@@ -187,7 +187,7 @@
                   <text x="4" y="18" font-size="16" font-weight="bold" fill="currentColor" stroke="none">AA</text>
                 </svg>
               </button>
-              <button class="case-btn active" data-setting="identifiersCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
+              <button class="case-btn" data-setting="identifiersCase" data-value="lower" data-tooltip="Lowercase" title="Lowercase">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <text x="6" y="18" font-size="16" fill="currentColor" stroke="none">aa</text>
                 </svg>
@@ -197,7 +197,7 @@
                   <text x="5" y="18" font-size="16" fill="currentColor" stroke="none">Aa</text>
                 </svg>
               </button>
-              <button class="case-btn" data-setting="identifiersCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
+              <button class="case-btn active" data-setting="identifiersCase" data-value="unchanged" data-tooltip="Unchanged" title="Unchanged">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M5 12h14M5 8h14M5 16h14"/>
                 </svg>
@@ -258,12 +258,40 @@
           <div class="modal-section">
             <h3 class="modal-section-title">Layout Settings</h3>
     <select id="stylePreset" style="display:none;"><option value="default" selected>Default</option></select>
-    <select id="keywordCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
-    <select id="dataTypeCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
-    <select id="functionCase" style="display:none;"><option value="initcap" selected>InitCap</option></select>
-    <select id="identifiersCase" style="display:none;"><option value="lower" selected>Lowercase</option></select>
-    <select id="variableCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
-    <select id="quotedIdentifierCase" style="display:none;"><option value="unchanged" selected>Unchanged</option></select>
+    <select id="keywordCase" style="display:none;">
+      <option value="upper">Uppercase</option>
+      <option value="lower">Lowercase</option>
+      <option value="unchanged" selected>Unchanged</option>
+    </select>
+    <select id="dataTypeCase" style="display:none;">
+      <option value="upper">Uppercase</option>
+      <option value="lower">Lowercase</option>
+      <option value="unchanged" selected>Unchanged</option>
+    </select>
+    <select id="functionCase" style="display:none;">
+      <option value="upper">Uppercase</option>
+      <option value="lower">Lowercase</option>
+      <option value="initcap">InitCap</option>
+      <option value="unchanged" selected>Unchanged</option>
+    </select>
+    <select id="identifiersCase" style="display:none;">
+      <option value="upper">Uppercase</option>
+      <option value="lower">Lowercase</option>
+      <option value="initcap">InitCap</option>
+      <option value="unchanged" selected>Unchanged</option>
+    </select>
+    <select id="variableCase" style="display:none;">
+      <option value="upper">Uppercase</option>
+      <option value="lower">Lowercase</option>
+      <option value="initcap">InitCap</option>
+      <option value="unchanged" selected>Unchanged</option>
+    </select>
+    <select id="quotedIdentifierCase" style="display:none;">
+      <option value="upper">Uppercase</option>
+      <option value="lower">Lowercase</option>
+      <option value="initcap">InitCap</option>
+      <option value="unchanged" selected>Unchanged</option>
+    </select>
     <select id="commaLinebreak" style="display:none;"><option value="after" selected>After</option></select>
     <select id="listStyle" style="display:none;"><option value="stacked" selected>Stacked</option></select>
     <select id="stackedAlign" style="display:none;"><option value="left" selected>Align left</option></select>
