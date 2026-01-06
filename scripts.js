@@ -23,15 +23,36 @@ const controls = {
   removeComments: document.getElementById('removeComments'),
 };
 
-const initialSql = `SELECT supplier_name, city
-FROM (
-  SELECT *
-  FROM suppliers
-  JOIN addresses ON suppliers.address_id = addresses.id
-) AS suppliers
-WHERE supplier_id > 500
-  AND city IS NOT NULL
-ORDER BY supplier_name ASC, city DESC;
+const initialSql = `SELECT DISTINCT c.customer_name,
+       c.city,
+       o.total_amount,
+       SUM(li.quantity) AS total_qty,
+       COUNT(*) AS order_count,
+       COALESCE(c.segment, 'Retail') AS segment_name
+FROM SalesDB.public.customers AS c
+JOIN SalesDB.public.orders AS o ON c.customer_id = o.customer_id
+JOIN SalesDB.public.line_items AS li ON o.order_id = li.order_id
+WHERE c.status = 'Active'
+  AND c.city IS NOT NULL
+  AND o.created_at >= '2024-01-01'
+  AND o.currency = 'usd'
+  AND o.total_amount > 500
+  AND c.region IN ('North', 'south', 'EAST')
+  AND o.sales_rep = :SalesRep
+  AND c.account_code = @AccountCode
+  AND o."OrderType" = 'Online'
+  AND li.\`ProductName\` <> 'Sample'
+  AND c.[PreferredCustomer] = 1
+GROUP BY c.customer_name, c.city, o.total_amount, c.segment
+HAVING SUM(li.quantity) > 10
+ORDER BY c.customer_name ASC, c.city DESC;
+
+CREATE TABLE SalesDB.public.audit_log (
+  audit_id INT,
+  event_time TIMESTAMP,
+  event_type VARCHAR(50),
+  user_name VARCHAR(100)
+);
 `;
 
 editor.value = initialSql;
@@ -269,61 +290,6 @@ const applyVariableCase = (sql, mode) => {
   });
 };
 
-const applyIdentifierCaseBestEffort = (sql, cfg) => {
-  // Lightweight, heuristic-only casing. If you need precise table/column/alias
-  // casing, it requires a real SQL parser.
-  let out = sql;
-
-  // Table names after FROM/JOIN/UPDATE/INTO
-  if (!isUnchanged(cfg.identifiersCase)) {
-    out = forEachNonQuotedSegment(out, (seg) => {
-      return seg.replace(
-        /(\bFROM\b|\bJOIN\b|\bUPDATE\b|\bINTO\b)\s+([A-Za-z_][A-Za-z0-9_$\.]*)(?=\b|\s|\n)/gi,
-        (m, kw, id) => `${kw} ${applyCase(id, cfg.identifiersCase)}`
-      );
-    });
-  }
-
-  // Aliases after AS
-  if (!isUnchanged(cfg.identifiersCase)) {
-    out = forEachNonQuotedSegment(out, (seg) => {
-      return seg.replace(/\bAS\b\s+([A-Za-z_][A-Za-z0-9_$]*)/gi, (m, id) => {
-        return m.replace(id, applyCase(id, cfg.identifiersCase));
-      });
-    });
-  }
-
-  // Columns in simple SELECT lists: lines that start with indentation and a token
-  if (!isUnchanged(cfg.identifiersCase)) {
-    out = out
-      .split('\n')
-      .map((line) => {
-        const m = line.match(/^(\s+)([A-Za-z_][A-Za-z0-9_$\.]*)(\s*,?\s*)(.*)$/);
-        if (!m) return line;
-        const [, indent, token, mid, rest] = m;
-        if (/^(FROM|WHERE|GROUP|ORDER|HAVING|LIMIT|JOIN|ON)\b/i.test(token)) return line;
-        if (token === '*') return line;
-        return `${indent}${applyCase(token, cfg.identifiersCase)}${mid}${rest}`;
-      })
-      .join('\n');
-  }
-
-  // First select item on same line as SELECT (best-effort)
-  if (!isUnchanged(cfg.identifiersCase)) {
-    out = forEachNonQuotedSegment(out, (seg) => {
-      return seg.replace(
-        /\bSELECT\b(\s+DISTINCT|\s+ALL)?\s+([A-Za-z_][A-Za-z0-9_$\.]*)/gi,
-        (m, modifier, id) => {
-          const replacement = applyCase(id, cfg.identifiersCase);
-          return m.replace(id, replacement);
-        }
-      );
-    });
-  }
-
-  return out;
-};
-
 const applyQuotedIdentifierCase = (sql, mode) => {
   if (isUnchanged(mode)) return sql;
 
@@ -462,6 +428,7 @@ const getFormatterOptions = (cfg) => {
 
   if (!isUnchanged(cfg.keywordCase)) opts.keywordCase = cfg.keywordCase;
   if (!isUnchanged(cfg.dataTypeCase)) opts.dataTypeCase = cfg.dataTypeCase;
+  if (!isUnchanged(cfg.identifiersCase)) opts.identifierCase = cfg.identifiersCase;
 
   // sql-formatter supports upper/lower for functionCase.
   // InitCap is handled as a post-step.
@@ -469,9 +436,8 @@ const getFormatterOptions = (cfg) => {
     opts.functionCase = cfg.functionCase;
   }
 
-  // Note: We intentionally avoid sql-formatter's experimental identifierCase here.
-  // We apply identifier casing as a post-step (best-effort) so quoted identifiers
-  // can remain unchanged.
+  // Note: quoted identifier casing is handled separately; identifierCase applies to
+  // unquoted identifiers only.
 
   // Preset styles
   if (cfg.stylePreset === 'indented') {
@@ -555,10 +521,9 @@ const formatAndRender = () => {
       }
     }
 
-    // Post-processing casing
+    // Post-processing casing (only for modes not supported by sql-formatter)
     out = applyFunctionInitCap(out, cfg.functionCase);
     out = applyVariableCase(out, cfg.variableCase);
-    out = applyIdentifierCaseBestEffort(out, cfg);
     out = applyQuotedIdentifierCase(out, cfg.quotedIdentifierCase);
 
     setOutput(out);
