@@ -192,6 +192,18 @@ body::before {
   font-weight: 600;
 }
 
+.panel-header-output {
+  position: relative;
+  padding-right: 48px;
+}
+
+.panel-header-output .preview-copy-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .preview-copy-btn {
   display: flex;
   align-items: center;

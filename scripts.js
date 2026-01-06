@@ -1062,3 +1062,103 @@ function copyPreviewContent() {
   });
 }
 
+// Editor history for undo/redo
+let editorHistory = [editor.value];
+let historyIndex = 0;
+let isUndoRedoing = false;
+
+function saveToEditorHistory() {
+  if (isUndoRedoing) return;
+  
+  // Remove any future history if we're not at the end
+  editorHistory = editorHistory.slice(0, historyIndex + 1);
+  
+  // Add current state
+  editorHistory.push(editor.value);
+  
+  // Limit history to 50 entries
+  if (editorHistory.length > 50) {
+    editorHistory.shift();
+  } else {
+    historyIndex++;
+  }
+}
+
+// Save to history on input with debounce
+let historySaveTimeout;
+editor.addEventListener('input', () => {
+  clearTimeout(historySaveTimeout);
+  historySaveTimeout = setTimeout(() => {
+    saveToEditorHistory();
+  }, 500);
+});
+
+// File operations
+window.undoEditor = function() {
+  if (historyIndex > 0) {
+    isUndoRedoing = true;
+    historyIndex--;
+    editor.value = editorHistory[historyIndex];
+    updateLineNumbers();
+    formatAndRender();
+    isUndoRedoing = false;
+  }
+};
+
+window.redoEditor = function() {
+  if (historyIndex < editorHistory.length - 1) {
+    isUndoRedoing = true;
+    historyIndex++;
+    editor.value = editorHistory[historyIndex];
+    updateLineNumbers();
+    formatAndRender();
+    isUndoRedoing = false;
+  }
+};
+
+window.copyEditor = async function() {
+  const selection = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+  const textToCopy = selection || editor.value;
+  
+  try {
+    await navigator.clipboard.writeText(textToCopy);
+  } catch (err) {
+    // Fallback
+    editor.select();
+    document.execCommand('copy');
+  }
+  
+  editor.focus();
+};
+
+window.pasteEditor = async function() {
+  try {
+    const text = await navigator.clipboard.readText();
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const currentValue = editor.value;
+    
+    editor.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+    editor.selectionStart = editor.selectionEnd = start + text.length;
+    
+    updateLineNumbers();
+    formatAndRender();
+    saveToEditorHistory();
+    editor.focus();
+  } catch (err) {
+    console.error('Paste failed:', err);
+  }
+};
+
+// Keyboard shortcuts
+editor.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'z' && !e.shiftKey) {
+      e.preventDefault();
+      undoEditor();
+    } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
+      e.preventDefault();
+      redoEditor();
+    }
+  }
+});
