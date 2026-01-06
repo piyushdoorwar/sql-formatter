@@ -2,6 +2,8 @@ const editor = document.getElementById('editor');
 const lineNumbers = document.getElementById('line-numbers');
 const resizer = document.getElementById('resizer');
 const outputEl = document.getElementById('output');
+const outputLineNumbers = document.getElementById('output-line-numbers');
+const previewEl = document.getElementById('preview');
 const copyBtn = document.querySelector('.preview-copy-btn');
 
 const controls = {
@@ -24,8 +26,7 @@ const controls = {
   removeComments: document.getElementById('removeComments'),
 };
 
-const initialSql = `-- Paste SQL on the left
-SELECT supplier_name, city
+const initialSql = `SELECT supplier_name, city
 FROM (
   SELECT *
   FROM suppliers
@@ -49,6 +50,12 @@ const debounce = (fn, waitMs) => {
 const updateLineNumbers = () => {
   const lines = editor.value.split('\n').length;
   lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
+};
+
+const updateOutputLineNumbers = (sql) => {
+  if (!outputLineNumbers) return;
+  const lines = (sql || '').split('\n').length;
+  outputLineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
 };
 
 const isUnchanged = (value) => !value || value === 'unchanged';
@@ -307,6 +314,137 @@ const applyIdentifierCaseBestEffort = (sql, cfg) => {
   return out;
 };
 
+const applyQuotedIdentifierCase = (sql, mode) => {
+  if (isUnchanged(mode)) return sql;
+
+  let out = '';
+  let i = 0;
+  let state = 'none';
+  let buf = '';
+
+  const flush = () => {
+    if (buf) {
+      out += applyCase(buf, mode);
+      buf = '';
+    }
+  };
+
+  while (i < sql.length) {
+    const ch = sql[i];
+    const next = sql[i + 1];
+
+    if (state === 'none') {
+      if (ch === "'") {
+        out += ch;
+        state = 'single';
+        i++;
+        continue;
+      }
+      if (ch === '"') {
+        out += ch;
+        state = 'double';
+        i++;
+        continue;
+      }
+      if (ch === '`') {
+        out += ch;
+        state = 'backtick';
+        i++;
+        continue;
+      }
+      if (ch === '[') {
+        out += ch;
+        state = 'bracket';
+        i++;
+        continue;
+      }
+      out += ch;
+      i++;
+      continue;
+    }
+
+    if (state === 'single') {
+      if (ch === "'" && next === "'") {
+        out += "''";
+        i += 2;
+        continue;
+      }
+      if (ch === "'") {
+        out += ch;
+        state = 'none';
+        i++;
+        continue;
+      }
+      out += ch;
+      i++;
+      continue;
+    }
+
+    if (state === 'double') {
+      if (ch === '"' && next === '"') {
+        flush();
+        out += '""';
+        i += 2;
+        continue;
+      }
+      if (ch === '"') {
+        flush();
+        out += ch;
+        state = 'none';
+        i++;
+        continue;
+      }
+      buf += ch;
+      i++;
+      continue;
+    }
+
+    if (state === 'backtick') {
+      if (ch === '`' && next === '`') {
+        flush();
+        out += '``';
+        i += 2;
+        continue;
+      }
+      if (ch === '`') {
+        flush();
+        out += ch;
+        state = 'none';
+        i++;
+        continue;
+      }
+      buf += ch;
+      i++;
+      continue;
+    }
+
+    if (state === 'bracket') {
+      if (ch === ']' && next === ']') {
+        flush();
+        out += ']]';
+        i += 2;
+        continue;
+      }
+      if (ch === ']') {
+        flush();
+        out += ch;
+        state = 'none';
+        i++;
+        continue;
+      }
+      buf += ch;
+      i++;
+      continue;
+    }
+  }
+
+  if (state !== 'none') {
+    flush();
+  }
+
+  return out;
+};
+
 const getFormatterOptions = (cfg) => {
   const opts = {
     language: cfg.dialect,
@@ -351,6 +489,7 @@ const getFormatterOptions = (cfg) => {
 
 const setOutput = (sql) => {
   outputEl.textContent = sql;
+  updateOutputLineNumbers(sql);
   if (window.hljs) {
     try {
       window.hljs.highlightElement(outputEl);
@@ -418,6 +557,7 @@ const formatAndRender = () => {
     out = applyFunctionInitCap(out, cfg.functionCase);
     out = applyVariableCase(out, cfg.variableCase);
     out = applyIdentifierCaseBestEffort(out, cfg);
+    out = applyQuotedIdentifierCase(out, cfg.quotedIdentifierCase);
 
     setOutput(out);
   } catch (err) {
@@ -435,6 +575,12 @@ editor.addEventListener('input', () => {
 editor.addEventListener('scroll', () => {
   lineNumbers.scrollTop = editor.scrollTop;
 });
+
+if (previewEl && outputLineNumbers) {
+  previewEl.addEventListener('scroll', () => {
+    outputLineNumbers.scrollTop = previewEl.scrollTop;
+  });
+}
 
 Object.values(controls).forEach((el) => {
   el.addEventListener('change', scheduleRender);

@@ -973,6 +973,39 @@ textarea::selection {
   min-height: 0;
 }
 
+.output-container {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.output-line-numbers {
+  padding: 1rem 0.75rem 1rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-disabled);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: right;
+  user-select: none;
+  border-right: 1px solid var(--border);
+  min-width: 50px;
+  white-space: pre;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.output-line-numbers::-webkit-scrollbar {
+  display: none;
+}
+
+.output-container pre {
+  flex: 1;
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
 .preview h1,
 .preview h2,
 .preview h3,
