@@ -626,12 +626,15 @@ document.addEventListener('mousemove', (e) => {
 
   const offsetX = e.clientX - containerRect.left;
   const totalWidth = containerRect.width;
-  const leftWidth = (offsetX / totalWidth) * 100;
+  const resizerWidth = resizer.offsetWidth;
+  const availableWidth = totalWidth - resizerWidth;
+  const minLeft = availableWidth * 0.2;
+  const maxLeft = availableWidth * 0.8;
+  const leftPx = Math.min(Math.max(offsetX - resizerWidth / 2, minLeft), maxLeft);
+  const rightPx = availableWidth - leftPx;
 
-  if (leftWidth > 20 && leftWidth < 80) {
-    leftPanel.style.flex = `0 0 ${leftWidth}%`;
-    rightPanel.style.flex = `0 0 ${100 - leftWidth}%`;
-  }
+  leftPanel.style.flex = `0 0 ${leftPx}px`;
+  rightPanel.style.flex = `0 0 ${rightPx}px`;
 });
 
 document.addEventListener('mouseup', () => {
