@@ -1066,13 +1066,13 @@ textarea::selection {
 }
 
 .preview pre {
-  padding: 1.25rem;
+  padding: 0;
   overflow-x: auto;
-  margin: 1rem 0;
+  margin: 0;
   position: relative;
-  background: rgba(0, 0, 0, 0.5) !important;
-  border: 1px solid rgba(103, 57, 183, 0.3);
-  box-shadow: var(--shadow-md);
+  background: transparent !important;
+  border: none;
+  box-shadow: none;
 }
 
 .preview pre code {
