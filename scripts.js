@@ -22,7 +22,7 @@ const controls = {
   removeComments: document.getElementById('removeComments'),
 };
 
-const initialSql = `SELECT DISTINCT c.customer_name,
+const sampleSql = `SELECT DISTINCT c.customer_name,
        c.city,
        o.total_amount,
        SUM(li.quantity) AS total_qty,
@@ -54,7 +54,7 @@ CREATE TABLE SalesDB.dbo.audit_log (
 );
 `;
 
-editor.value = initialSql;
+editor.value = '';
 
 const debounce = (fn, waitMs) => {
   let timer;
@@ -663,6 +663,14 @@ document.addEventListener('mouseup', () => {
 
 updateLineNumbers();
 formatAndRender();
+
+window.loadSampleSql = function() {
+  editor.value = sampleSql;
+  updateLineNumbers();
+  formatAndRender();
+  saveToEditorHistory();
+  editor.focus();
+};
 
 // Modal Functions
 window.openModal = (modalId) => {

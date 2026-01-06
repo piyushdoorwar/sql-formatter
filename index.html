@@ -45,6 +45,13 @@
               <line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
           </button>
+          <button class="toolbar-btn" onclick="loadSampleSql()" data-tooltip="Load sample SQL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="14" height="16" rx="2" ry="2"/>
+              <path d="M7 8h6M7 12h6M7 16h4"/>
+              <path d="M17 8h4v12a2 2 0 01-2 2H9"/>
+            </svg>
+          </button>
           <button class="toolbar-btn" onclick="pasteEditor()" data-tooltip="Paste (Ctrl+V)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
@@ -180,7 +187,10 @@
             </div>
           </div>
           <div class="form-group inline-case">
-            <label>Identifiers Case (table/column/alias):</label>
+            <label>
+              <span>Identifiers Case</span>
+              <small class="field-subtitle">(table/column/alias)</small>
+            </label>
             <div class="case-btn-group">
               <button class="case-btn" data-setting="identifiersCase" data-value="upper" data-tooltip="Uppercase" title="Uppercase">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
