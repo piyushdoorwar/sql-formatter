@@ -369,8 +369,8 @@ body::before {
   justify-content: center;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  border: none;
+  background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
   border-radius: 10px;
@@ -383,16 +383,14 @@ body::before {
 }
 
 .toolbar-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--accent-purple);
+  background: var(--accent-purple);
   color: var(--text);
   transform: translateY(-2px);
   box-shadow: var(--shadow-purple);
 }
 
 .toolbar-icon-btn.active {
-  background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-light));
-  border-color: var(--accent-purple-light);
+  background: var(--accent-purple);
   color: var(--text);
   box-shadow: var(--shadow-purple);
 }
