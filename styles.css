@@ -965,9 +965,9 @@ textarea::selection {
 .preview {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: 0;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.01);
+  background: transparent;
   font-size: 1rem;
   line-height: 1.65;
   min-height: 0;
@@ -977,6 +977,11 @@ textarea::selection {
   display: flex;
   align-items: stretch;
   min-height: 0;
+  height: 100%;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.01);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .output-line-numbers {
@@ -1114,6 +1119,10 @@ textarea::selection {
   display: block;
   overflow-x: auto;
   border: none;
+}
+
+.preview .output-container pre {
+  padding: 1rem;
 }
 
 .code-language-label {
