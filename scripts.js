@@ -29,27 +29,27 @@ const initialSql = `SELECT DISTINCT c.customer_name,
        SUM(li.quantity) AS total_qty,
        COUNT(*) AS order_count,
        COALESCE(c.segment, 'Retail') AS segment_name
-FROM SalesDB.public.customers AS c
-JOIN SalesDB.public.orders AS o ON c.customer_id = o.customer_id
-JOIN SalesDB.public.line_items AS li ON o.order_id = li.order_id
+FROM SalesDB.dbo.customers AS c
+JOIN SalesDB.dbo.orders AS o ON c.customer_id = o.customer_id
+JOIN SalesDB.dbo.line_items AS li ON o.order_id = li.order_id
 WHERE c.status = 'Active'
   AND c.city IS NOT NULL
   AND o.created_at >= '2024-01-01'
   AND o.currency = 'usd'
   AND o.total_amount > 500
   AND c.region IN ('North', 'south', 'EAST')
-  AND o.sales_rep = :SalesRep
+  AND o.sales_rep = @SalesRep
   AND c.account_code = @AccountCode
-  AND o."OrderType" = 'Online'
-  AND li.\`ProductName\` <> 'Sample'
+  AND o.[OrderType] = 'Online'
+  AND li.[ProductName] <> 'Sample'
   AND c.[PreferredCustomer] = 1
 GROUP BY c.customer_name, c.city, o.total_amount, c.segment
 HAVING SUM(li.quantity) > 10
 ORDER BY c.customer_name ASC, c.city DESC;
 
-CREATE TABLE SalesDB.public.audit_log (
+CREATE TABLE SalesDB.dbo.audit_log (
   audit_id INT,
-  event_time TIMESTAMP,
+  event_time DATETIME,
   event_type VARCHAR(50),
   user_name VARCHAR(100)
 );
@@ -63,6 +63,23 @@ const debounce = (fn, waitMs) => {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), waitMs);
   };
+};
+
+const detectDialect = (sql) => {
+  const text = sql || '';
+  if (/@[A-Za-z_][A-Za-z0-9_]*/.test(text) || /\[[^\]]+\]/.test(text)) return 'tsql';
+  if (/:[A-Za-z_][A-Za-z0-9_]*/.test(text)) return 'plsql';
+  if (/`[^`]+`/.test(text)) return 'mysql';
+  if (/\bILIKE\b|\bRETURNING\b|\bSERIAL\b/i.test(text)) return 'postgresql';
+  return 'sql';
+};
+
+const updateSqlTypeLabel = (dialect) => {
+  const title = document.getElementById('sql-input-title');
+  const hint = document.getElementById('sql-type-hint');
+  const label = (dialect || 'sql').toUpperCase();
+  if (title) title.textContent = 'SQL Input';
+  if (hint) hint.textContent = label;
 };
 
 const updateLineNumbers = () => {
@@ -423,7 +440,7 @@ const applyQuotedIdentifierCase = (sql, mode) => {
 
 const getFormatterOptions = (cfg) => {
   const opts = {
-    language: 'sql',
+    language: cfg.dialect,
   };
 
   if (!isUnchanged(cfg.keywordCase)) opts.keywordCase = cfg.keywordCase;
@@ -470,6 +487,7 @@ const setOutput = (sql) => {
 
 const formatAndRender = () => {
   const cfg = {
+    dialect: detectDialect(editor.value),
     stylePreset: controls.stylePreset.value,
     keywordCase: controls.keywordCase.value,
     dataTypeCase: controls.dataTypeCase.value,
@@ -489,6 +507,7 @@ const formatAndRender = () => {
   };
 
   let sql = editor.value;
+  updateSqlTypeLabel(cfg.dialect);
 
   if (cfg.removeLinebreakBeforeBeautify) {
     sql = sql.replace(/\r?\n+/g, ' ').replace(/\s{2,}/g, ' ');
