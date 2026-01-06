@@ -1234,6 +1234,13 @@ textarea::selection {
   max-height: 85vh;
 }
 
+.modal-content-wide {
+  max-width: 1200px;
+  width: min(95vw, 1200px);
+  height: min(92vh, 940px);
+  max-height: 92vh;
+}
+
 @keyframes modalSlideIn {
   from {
     opacity: 0;
@@ -1290,6 +1297,35 @@ textarea::selection {
   overflow-y: auto;
   flex: 1;
   min-height: 0;
+}
+
+#settingsModal .modal-body,
+#settingsModal .modal-body-split {
+  overflow: hidden;
+}
+
+#settingsModal .modal-body-split {
+  flex: 1;
+}
+
+#settingsModal .modal-footer {
+  margin-top: auto;
+}
+
+.form-group.inline-case {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.form-group.inline-case label {
+  margin: 0;
+  min-width: 220px;
+}
+
+.form-group.inline-case .case-btn-group {
+  flex: 1;
+  justify-content: flex-start;
 }
 
 .modal-footer {
