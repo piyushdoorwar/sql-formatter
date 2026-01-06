@@ -707,6 +707,11 @@ Case Settings
   height: 20px;
 }
 
+.case-btn text {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.02em;
+}
+
 .case-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--accent-purple);
