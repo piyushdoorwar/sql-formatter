@@ -16,8 +16,6 @@ const controls = {
   listStyle: document.getElementById('listStyle'),
   andOrUnderWhere: document.getElementById('andOrUnderWhere'),
   removeLinebreakBeforeBeautify: document.getElementById('removeLinebreakBeforeBeautify'),
-  trimQuotedCharEachLine: document.getElementById('trimQuotedCharEachLine'),
-  trimChar: document.getElementById('trimChar'),
   minify: document.getElementById('minify'),
   removeComments: document.getElementById('removeComments'),
 };
@@ -278,20 +276,6 @@ const removeSqlComments = (sql) => {
   });
 };
 
-const trimQuotedCharEachLine = (sql, quotedChar) => {
-  if (!quotedChar) return sql;
-  const qc = quotedChar[0];
-  return sql
-    .split(/\r?\n/)
-    .map((line) => {
-      let out = line;
-      if (out.startsWith(qc)) out = out.slice(1);
-      if (out.endsWith(qc)) out = out.slice(0, -1);
-      return out;
-    })
-    .join('\n');
-};
-
 const minifySql = (sql) => {
   // Best-effort minify outside quoted segments.
   const squashed = forEachNonQuotedSegment(sql, (seg) => {
@@ -548,8 +532,6 @@ const formatAndRender = () => {
     listStyle: controls.listStyle.value,
     andOrUnderWhere: controls.andOrUnderWhere.checked,
     removeLinebreakBeforeBeautify: controls.removeLinebreakBeforeBeautify.checked,
-    trimQuotedCharEachLine: controls.trimQuotedCharEachLine.checked,
-    trimChar: controls.trimChar.value,
     minify: controls.minify.checked,
     removeComments: controls.removeComments.checked,
   };
@@ -559,10 +541,6 @@ const formatAndRender = () => {
 
   if (cfg.removeLinebreakBeforeBeautify) {
     sql = sql.replace(/\r?\n+/g, ' ').replace(/\s{2,}/g, ' ');
-  }
-
-  if (cfg.trimQuotedCharEachLine) {
-    sql = trimQuotedCharEachLine(sql, cfg.trimChar);
   }
 
   if (cfg.removeComments) {
