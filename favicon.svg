@@ -19,6 +19,26 @@
     <path d='M 17 45 C 17 52 31 57 50 57 C 69 57 83 52 83 45'/>
     <path d='M 17 60 C 17 67 31 72 50 72 C 69 72 83 67 83 60'/>
   </g>
+  <g fill='none' stroke='#ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' opacity='0.55'>
+    <path d='M 17 45 C 17 52 31 57 50 57 C 69 57 83 52 83 45' stroke-dasharray='6 10'>
+      <animate attributeName='stroke-dashoffset' values='0;-32' dur='2.6s' repeatCount='indefinite'/>
+      <animate attributeName='opacity' values='0.2;0.6;0.2' dur='2.6s' repeatCount='indefinite'/>
+    </path>
+    <path d='M 17 60 C 17 67 31 72 50 72 C 69 72 83 67 83 60' stroke-dasharray='6 10'>
+      <animate attributeName='stroke-dashoffset' values='0;-32' dur='3.1s' repeatCount='indefinite'/>
+      <animate attributeName='opacity' values='0.15;0.55;0.15' dur='3.1s' repeatCount='indefinite'/>
+    </path>
+  </g>
+  <g>
+    <circle cx='26' cy='26' r='2.2' fill='#ffffff' opacity='0.35'>
+      <animate attributeName='cy' values='26;18;26' dur='2.8s' repeatCount='indefinite'/>
+      <animate attributeName='opacity' values='0.1;0.5;0.1' dur='2.8s' repeatCount='indefinite'/>
+    </circle>
+    <circle cx='58' cy='18' r='2.6' fill='#ffffff' opacity='0.35'>
+      <animate attributeName='cy' values='18;12;18' dur='3.4s' repeatCount='indefinite'/>
+      <animate attributeName='opacity' values='0.1;0.55;0.1' dur='3.4s' repeatCount='indefinite'/>
+    </circle>
+  </g>
   <circle cx='74' cy='22' r='7' fill='#ffffff' opacity='0.65'>
     <animate attributeName='opacity' values='0.15;0.65;0.2' dur='3.2s' repeatCount='indefinite'/>
     <animate attributeName='r' values='5;7;5' dur='3.2s' repeatCount='indefinite'/>
