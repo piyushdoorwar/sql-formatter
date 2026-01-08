@@ -1,15 +1,27 @@
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
   <defs>
-    <linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'>
-      <stop offset='0%' style='stop-color:#6739b7;stop-opacity:1' />
-      <stop offset='100%' style='stop-color:#3d8bfd;stop-opacity:1' />
+    <linearGradient id='bg' x1='0' y1='0' x2='100' y2='100' gradientUnits='userSpaceOnUse'>
+      <stop offset='0%' stop-color='#ff7a45'/>
+      <stop offset='55%' stop-color='#ffb14f'/>
+      <stop offset='100%' stop-color='#2f86ff'/>
+      <animateTransform attributeName='gradientTransform' type='rotate' from='0 50 50' to='360 50 50' dur='16s' repeatCount='indefinite'/>
     </linearGradient>
+    <radialGradient id='glow' cx='35%' cy='30%' r='70%'>
+      <stop offset='0%' stop-color='#ffffff' stop-opacity='0.7'/>
+      <stop offset='60%' stop-color='#ffffff' stop-opacity='0'/>
+    </radialGradient>
   </defs>
-  <rect width='100' height='100' rx='20' fill='url(#grad)'/>
-  <!-- Database icon -->
-  <ellipse cx='50' cy='30' rx='35' ry='12' fill='white' opacity='0.9'/>
-  <path d='M 15 30 L 15 70 C 15 77 30 82 50 82 C 70 82 85 77 85 70 L 85 30' fill='none' stroke='white' stroke-width='4' opacity='0.9'/>
-  <path d='M 15 45 C 15 52 30 57 50 57 C 70 57 85 52 85 45' fill='none' stroke='white' stroke-width='4' opacity='0.9'/>
-  <path d='M 15 60 C 15 67 30 72 50 72 C 70 72 85 67 85 60' fill='none' stroke='white' stroke-width='4' opacity='0.9'/>
+  <rect width='100' height='100' rx='22' fill='url(#bg)'/>
+  <rect width='100' height='100' rx='22' fill='url(#glow)'/>
+  <g fill='none' stroke='#ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' opacity='0.92'>
+    <ellipse cx='50' cy='30' rx='33' ry='11' fill='#ffffff' opacity='0.95'/>
+    <path d='M 17 30 L 17 70 C 17 77 31 82 50 82 C 69 82 83 77 83 70 L 83 30'/>
+    <path d='M 17 45 C 17 52 31 57 50 57 C 69 57 83 52 83 45'/>
+    <path d='M 17 60 C 17 67 31 72 50 72 C 69 72 83 67 83 60'/>
+  </g>
+  <circle cx='74' cy='22' r='7' fill='#ffffff' opacity='0.65'>
+    <animate attributeName='opacity' values='0.15;0.65;0.2' dur='3.2s' repeatCount='indefinite'/>
+    <animate attributeName='r' values='5;7;5' dur='3.2s' repeatCount='indefinite'/>
+  </circle>
 </svg>
 
